@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block body %}
+    <p style="text-align: center; font-size: 20px">{{ user.username }}发过的帖子:</p>
+    <div>
+        <link href="/static/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/default.css" rel="stylesheet">
+        {{ pagination.links }}
+    </div>
+    <div style="text-align: center; color: white">
+        过滤板块：<select onchange="window.location.replace(this.options[this.selectedIndex].value)">
+            <option>----请选择----</option>
+            <option value="/pofile">全部</option>
+            {% for board in boards %}
+                <option value="{{ url_for('profile', board_id=board.id, user_id=user.id) }}">【{{ board.name }}】</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div id="page">
+    {% for post in user.posts %}
+        <div id="content">
+            <h2 class="title">{{ post.title }}</h2>
+            <p class="byline" style="color: white"><small>板块：【{{ post.board.name }}】 投递时间：{{ post.create_time }} by <a href="/profile/{{ post.author.id }}">{{ post.author.username }}</a></small>
+            <p class="meta"><a href="{{ url_for('post_detail', post_id=post.id) }}" class="more">阅读({{ post.read_count }})</a> &nbsp;&nbsp;&nbsp; <a class="comments">评论({{ post.comments|length }})</a></p>
+        </div>
+    {% endfor %}
+    </div>
+
+
+
+{% endblock %}

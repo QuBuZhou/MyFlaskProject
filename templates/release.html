@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block body %}
+    <script type="text/javascript" src="https://unpkg.com/wangeditor/dist/wangEditor.min.js"></script>
+    <script type="text/javascript" src="../static/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript">
+        var csrftoken = "{{ csrf_token() }}"
+        function post_submit(){
+          event.preventDefault();
+
+          title = $("input[id='my_input']").val();
+          board_id = $("select[name='board_id']").val();
+          content = editor.txt.html();
+          if (title.length < 3 || title.length > 20) {
+              alert("标题的长度必须大于3个字，小于20个字！")
+              return;
+          }
+
+          if (content.length < 3) {
+              alert("请至少输入3个字的正文！");
+              return;
+          }
+
+          $.ajax({
+            url: "/release/check",
+            headers: {"X-CSRFToken":csrftoken},
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'title': title,
+                'board_id': board_id,
+                'content': content}),
+          }).done(function(data){
+              setTimeout(function (){
+                  window.location = "/";
+              },2000);
+          }).fail(function(error){
+              alert(error.message);
+          });
+        }
+    </script>
+    <div id="register_login">
+        <form method="post">
+            <p id="my_title">发布帖子</p>
+            <input id="my_input" name="title" type="text" placeholder="请输入标题" />
+            <select name="board_id">
+                {% for board in boards %}
+                    <option value="{{ board.id }}">{{ board.name }}</option>
+                {% endfor %}
+            </select>
+            <div id="editor"></div>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        </form>
+        <button id="submit-btn" style="height: 50px; width: 50px" onclick="post_submit()">发布</button>
+        <ul>
+            {% for message in get_flashed_messages() %}
+                <li style="color: red">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script type="text/javascript">
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        editor.create()
+    </script>
+{% endblock %}

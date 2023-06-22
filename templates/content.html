@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block body %}
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/default.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/wangeditor/dist/wangEditor.min.js"></script>
+    <div style="text-align: center">
+        <h2>{{ post.title }}</h2>
+        <p>
+            <span>发表时间：{{ post.create_time }}</span>
+            <span>作者：{{ post.author.username }}</span>
+            <span>所属板块：【{{ post.board.name }}】</span>
+            <span>阅读数：{{ post.read_count }}</span>
+            <span>评论数：{{ post.comments|length }}</span>
+            <span><a href="{{ url_for('blog_content') }}">返回首页</a></span>
+            <span><a href="/post/{{ post_id }}/delete">删除</a></span>
+        </p>
+        <article>
+            {{ post.content|safe }}
+        </article>
+        <br>
+        <p style="color: yellow; font-size: 20pt">-----评论区-----</p>
+        {% if session.logged_in %}
+            <span><button onclick="reply()" id="reply_button">我要回复！</button></span>
+        {% endif %}
+        <br>
+        <div>
+            {% for comment in post.comments %}
+                <p class="byline"><small>{{ comment.create_time }}<a href="/profile/{{ comment.author.id }}">{{ comment.author.username }}</a> | <a href="/post/{{ post_id }}/{{ comment.id }}">删除</a></small></p>
+                <article>
+                    <p>{{ comment.content|safe }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if session.logged_in %}
+        <div id="reply_content" style="display: none">
+            <div id="editor"></div>
+            <div style="text-align: center">
+                <button id="submit-btn" style="height: 50px; width: 50px" onclick="comment_submit()">回复</button>
+            </div>
+        </div>
+
+    {% else %}
+        <p style="text-align: center; color: yellow">登录后可以评论！</p>
+    {% endif %}
+    <script>
+        function reply(){
+            document.getElementById('reply_content').style.display=""
+            document.getElementById('reply_button').style.display='none'
+        }
+    </script>
+    <script type="text/javascript">
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        editor.create()
+    </script>
+    <script type="text/javascript" src="../static/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript">
+        var csrftoken = "{{ csrf_token() }}"
+        function comment_submit(){
+          event.preventDefault();
+          content = editor.txt.html();
+
+          if (content.length < 1) {
+              alert("请输入正文！");
+              return;
+          }
+
+          if (content.length > 1000) {
+              alert("字数过多！（超过1000字）")
+              return;
+          }
+
+          $.ajax({
+            url: '/post/{{ post_id }}/comment',
+            headers: {"X-CSRFToken":csrftoken},
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'content': content}),
+          }).done(function(data){
+              setTimeout(function (){
+                  window.location = "/post/{{ post_id }}";
+              },2000);
+          }).fail(function(error){
+              alert(error.message);
+          });
+        }
+    </script>
+
+{% endblock %}

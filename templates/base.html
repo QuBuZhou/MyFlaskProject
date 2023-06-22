@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>曲不周的个人博客</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="../static/default.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+<!-- start header -->
+<div id="header">
+	<div id="logo">
+		<h1><a href="#">曲不周的个人博客</a></h1>
+		<h2><a><font face="华文楷体"><b>花有重开日，人再无少年。</b></font></a></h2>
+	</div>
+	<div id="menu">
+		<ul>
+			<li id="t1"><a href="/" title="">主页</a></li>
+			<li id="t2"><a href="/post" title="">博客</a></li>
+            {% if session.logged_in %}
+			<li id="t3"><a href="#">用户：{{ session.username }}</a></li>
+            <li id="t4"><a href="/release" title="">发帖</a></li>
+            <li id="t5" ><a href="/log_out" title="">注销</a></li>
+            {% endif %}
+            {% if not session.logged_in %}
+			<li id="t6"><a href="/login" title="">登录</a></li>
+            <li id="t7" ><a href="/register" title="">注册</a></li>
+            {% endif %}
+		</ul>
+	</div>
+</div>
+{% block body %}
+{% endblock %}
+<!-- end header -->
+</body>
+</html>

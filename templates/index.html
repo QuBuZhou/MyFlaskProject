@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+<!-- start page -->
+{% block body %}
+<div id="gallery">
+	<div id="top-photo">
+		<p><a href="#"><img src="../static/images/img08.jpg" alt="" width="830" height="300" /></a></p>
+	</div>
+</div>
+
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+			<h1 class="title">欢迎来到曲不周的个人博客！</h1>
+			<div class="entry">
+				<p>
+                    欢迎大家来我的博客作客，希望大家在这里不要谩骂、说脏话，做违反法律的事情。
+                    你可以分享人生感悟、学习资源以及灌水聊天，但请不要打广告或者是发布不适内容。
+                    祝你玩得开心！
+                </p>
+			</div>
+		</div>
+	</div>
+	<!-- end content -->
+	<!-- start sidebar -->
+	<div id="sidebar">
+		<ul>
+			<li>
+				<h2>板块</h2>
+				<ul>
+                    {% for board in boards %}
+                        <li><a href="{{ url_for('blog_content', board_id=board.id) }}">{{ board.name }}</a></li>
+                    {% endfor %}
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<!-- end sidebar -->
+</div>
+<div style="clear: both; height: 30px">&nbsp;</div>
+<!-- end page -->
+{% endblock %}

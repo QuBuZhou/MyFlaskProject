@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div id="register_login">
+    <form action="/login/check" method="post">
+        <p>登录你的账号</p>
+        <p>
+            <input name="username" type="text" placeholder="请输入用户名" id="in1">
+        </p>
+        <p>
+            <input name="password" type="password" placeholder="请输入密码" id="in1">
+        </p>
+        <p>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="submit" value="登录"/>
+        </p>
+    </form>
+    <ul>
+        {% for message in get_flashed_messages() %}
+            <li style="color: red">{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+
+

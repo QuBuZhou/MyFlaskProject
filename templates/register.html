@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div id="register_login">
+    <form action="/register/check" method="post">
+        <p>欢迎加入！</p>
+        <p>
+            <input name="email" type="text" placeholder="请输入邮箱" id="in3">
+            <a href="/register?email="><button onclick="func(event)">发送验证码</button></a>
+        </p>
+        <p>
+            <input name="username" type="text" placeholder="请输入用户名" id="in1">
+        </p>
+        <p>
+            <input name="password" type="password" placeholder="请输入密码" id="in1">
+        </p>
+        <p>
+            <input name="confirm_password" type="password" placeholder="请再次输入密码" id="in1">
+        </p>
+        <p>
+            <input name="captcha" type="text" placeholder="请输入邮箱验证码" id="in1">
+        </p>
+        <p>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="submit" value="注册"/>
+        </p>
+    </form>
+    <ul>
+        {% for message in get_flashed_messages() %}
+            <li style="color: red">{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+<script>
+function func(event) {
+    event.preventDefault()
+    window.open('/mail/captcha?email=' + document.getElementsByName('email')[0].value)
+}
+</script>
+{% endblock %}
